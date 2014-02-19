@@ -189,7 +189,7 @@ func (c *Client) reader() {
 
 		latestActivity = time.Now()
 
-		c.handleEvent()
+		c.handleEvent(message)
 	}
 
 	c.ws.Close()
@@ -197,7 +197,7 @@ func (c *Client) reader() {
 
 // If there's a handler defined for this event,
 // then send the associated data to process it.
-func (c *Client) handleEvent(payload) {
+func (c *Client) handleEvent(payload string) {
 	message := Event{}
 
 	json.Unmarshal(payload, &message)
