@@ -1,17 +1,18 @@
 package pusher
 
 import (
-	"github.com/gorilla/websocket"
 	"encoding/json"
+	"github.com/gorilla/websocket"
+	"log"
 	"net/url"
 	"time"
-	"log"
 )
 
 // Default settings.
+// Currently only the ws scheme is supported.
 const (
 	pusherURL  = "ws://ws.pusherapp.com/app/"
-	clientName = "Go-pusher"
+	clientName = "Go-pusher.go"
 	version    = "0.0.1"
 	protocol   = "7"
 
@@ -24,7 +25,7 @@ const (
 // in order to check if the connection is still alive.
 var latestActivity time.Time
 
-// The skeleton of an event sent by pusher.
+// The skeleton of an event sent by Pusher.
 // Data is actually a JSON object as well,
 // but Pusher encodes it as a string, as explained here:
 // http://pusher.com/docs/pusher_protocol#double-encoding
@@ -40,12 +41,14 @@ type Client struct {
 	// The websocket connection to the Pusher service.
 	ws *websocket.Conn
 
-	// A map of callback functions to call
-	// for each event name.
+	// This map holds a channel for each event
+	// that has defined a callback.
+	// We read from the channel to get the associated data
+	// and trigger the callback.
 	handlers map[string]chan string
 
 	// Messages on this channel will be written to the websocket.
-	send    chan []byte
+	send chan []byte
 }
 
 // Connect to the Pusher server via a websocket,
@@ -119,7 +122,7 @@ func startWebSocket(key string) (*websocket.Conn, error) {
 	params.Set("version", version)
 	params.Set("protocol", protocol)
 
-  url := pusherURL + key + "?" + params.Encode()
+	url := pusherURL + key + "?" + params.Encode()
 
 	ws, _, err := websocket.DefaultDialer.Dial(url, nil)
 
@@ -136,7 +139,7 @@ func startWebSocket(key string) (*websocket.Conn, error) {
 	return ws, nil
 }
 
-// Close the current websocket and start a new one.
+// Close the current websocket connection and start a new one.
 func (c *Client) reconnect() error {
 	c.ws.Close()
 
@@ -175,7 +178,6 @@ func (c *Client) isActive() bool {
 	return time.Since(latestActivity) < checkWait
 }
 
-
 func (c *Client) reader() {
 	for {
 		_, message, err := c.ws.ReadMessage()
@@ -187,7 +189,7 @@ func (c *Client) reader() {
 
 		latestActivity = time.Now()
 
-    c.handleEvent()
+		c.handleEvent()
 	}
 
 	c.ws.Close()
