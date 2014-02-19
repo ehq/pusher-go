@@ -11,3 +11,47 @@ for production environments.
 Install with the `go get` command:
 
 `go get github.com/ehq/pusher-go`
+
+## Example Usage
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"github.com/ehq/pusher-go"
+	"log"
+)
+
+type Move struct {
+	X string `json:"x"`
+	Y string `json:"y"`
+}
+
+func main() {
+	client, err := pusher.Connect("your_pusher_key")
+
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	client.Subscribe("some_channel")
+
+	moves := make(chan Move)
+
+	client.On("move", func(data string) {
+		move := Move{}
+
+		json.Unmarshal([]byte(data), &move)
+
+		moves <- move
+	})
+
+	for {
+		move := <-moves
+
+		log.Printf("New move has been played at x: %s, y: %s", move.X, move.Y)
+	}
+}
+```
