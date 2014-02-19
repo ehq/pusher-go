@@ -57,3 +57,16 @@ func main() {
 	}
 }
 ```
+
+## Next steps
+
+The next goals for the project are:
+
+* Handle disconnects and network problems gracefully
+* Support standard [error codes](http://pusher.com/docs/pusher_protocol#error-codes)
+  * These also determine if a reconnect should be attempted or not.
+* Support [system events](http://pusher.com/docs/pusher_protocol#system-events)
+* Encapsulate and refactor the concept of a channel
+  * Also include presence channels and private channels (which require authentication)
+* Scope event handlers to channels, rather than making them be global.
+* Implement [client events](http://pusher.com/docs/pusher_protocol#channel-client-events)
