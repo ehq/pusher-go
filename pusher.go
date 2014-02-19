@@ -197,7 +197,7 @@ func (c *Client) reader() {
 
 // If there's a handler defined for this event,
 // then send the associated data to process it.
-func (c *Client) handleEvent(payload string) {
+func (c *Client) handleEvent(payload []byte) {
 	message := Event{}
 
 	json.Unmarshal(payload, &message)
