@@ -10,4 +10,4 @@ for production environments.
 
 Install with the `go get` command:
 
-`go get github.com/ehq/pusher.go`
+`go get github.com/ehq/pusher-go`
