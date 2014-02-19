@@ -6,6 +6,8 @@ This is an initial draft of a client library for Pusher, written in Go.
 So far a few basic features have been implemented, but this is still in no way ready
 for production environments.
 
+Check out this README or head over to [Go Walker](https://gowalker.org/github.com/ehq/pusher-go).
+
 ## Installation
 
 Install with the `go get` command:
